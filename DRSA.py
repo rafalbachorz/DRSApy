@@ -193,9 +193,11 @@ class DRSA:
             
     def predict(self, df):
         res = []
+        tmp = []
+        for rule in self.rules:
+            tmp.append(rule.apply(df))
         for i in range(df.shape[0]):
-            met = [rule for rule in self.rules if rule.apply(df.loc[[i]])[i]]
-            res.append(classify(met, self.__classes))
+            res.append(classify([self.rules[j] for j in np.where(np.array(tmp).T[i])[0]], self.__classes))
         return np.array(res).argmax(1)
         
     def domination(self, x, y):
