@@ -45,12 +45,14 @@ def LEM2(toCoverIdx, roughSet, direction, target, credibility=1.0):
     it = 0
     while len(left) > 0:
         it += 1
-        options = set()
+        optionsSet = set()
+        options = []
         for _, row in left.iterrows():
             for i in range(len(roughSet.df.columns)):
-                options.add((roughSet.df.columns[i], op[direction * roughSet.direction[i]], row[roughSet.df.columns[i]]))
-#         options = list(options)
-#         options.sort(key=lambda x: -x[1](roughSet.df[x[0]], x[2]).sum())
+                option = (roughSet.df.columns[i], op[direction * roughSet.direction[i]], row[roughSet.df.columns[i]])
+                if not option in optionsSet:
+                    options.append(option)
+                    optionsSet.add(option)
         mainRule = Rule((direction, target), [])
         tmpLeft = left.copy()
         while (int(mainRule.apply(toCover).sum()) / int(mainRule.apply(roughSet.df).sum())) < credibility:
@@ -80,10 +82,14 @@ def LEM2(toCoverIdx, roughSet, direction, target, credibility=1.0):
 
             mainRule.add(bestOption)
             tmpLeft = tmpLeft[mainRule.apply(tmpLeft)]
-            options = set()
+            optionsSet = set()
+            options = []
             for _, row in tmpLeft.iterrows():
                 for i in range(len(roughSet.df.columns)):
-                    options.add((roughSet.df.columns[i], op[direction * roughSet.direction[i]], row[roughSet.df.columns[i]]))
+                    option = (roughSet.df.columns[i], op[direction * roughSet.direction[i]], row[roughSet.df.columns[i]])
+                    if not option in optionsSet:
+                        options.append(option)
+                        optionsSet.add(option)
             print(bestOption)
             print(mainRule.apply(toCover).sum(), metricB)
 
