@@ -22,8 +22,9 @@ def test_classifier(decision_matrix):
     for x in X:
         XX[x+"-"] = X[x].copy()
     X = pd.concat([X, XX], axis=1)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=5)
+    test_size = 5
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
     drsa = DRSA([1, 1, 1, -1, -1, -1,])
     drsa.fit(X_train.reset_index(drop=True), y_train.reset_index(drop=True))
     y_pred = drsa.predict(X_test)
-    assert((np.array([0, 1, 0, 0, 0]) == y_pred).sum() == 5)
+    assert((np.array([0, 1, 0, 0, 0]) == y_pred).sum() == test_size)
